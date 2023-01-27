@@ -1,3 +1,5 @@
+mod _2105;
+
 fn main() {
-    println!("Hello, world!");
+    _2105::solution();
 }
