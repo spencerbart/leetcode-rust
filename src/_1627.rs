@@ -21,70 +21,12 @@ pub fn are_connected(n: i32, threshold: i32, queries: Vec<Vec<i32>>) -> Vec<bool
         let b = query[1];
         output.push(bfs(&graph, a, b))
     }
-    // for query in queries.iter() {
-    //     output.push(false);
-    //     let first = query[0];
-    //     let last = query[1];
-
-    //     let first_divisors = match cached_results.get(&first) {
-    //         Some(divisors) => divisors.clone(),
-    //         None => {
-    //             let divisors = get_divisors(first);
-    //             cached_results.insert(first, divisors.clone());
-    //             divisors
-    //        },
-    //     };
-
-    //     // println!("first_divisors: {:?}", first_divisors);
-
-    //     let last_divisors = match cached_results.get(&last) {
-    //         Some(divisors) => divisors.clone(),
-    //         None => {
-    //             let divisors = get_divisors(last);
-    //             cached_results.insert(last, divisors.clone());
-    //             divisors
-    //         }
-    //     };
-
-    //     // println!("second_divisors: {:?}", last_divisors);
-
-    //     if first_divisors.len() > last_divisors.len() {
-    //         for divisor in last_divisors.iter() {
-    //             if divisor <= &threshold {
-    //                 continue;
-    //             }
-    //             match first_divisors.get(divisor) {
-    //                 Some(_) => {
-    //                     output[i] = true;
-    //                     break;
-    //                 },
-    //                 None => (),
-    //             }
-    //         }
-    //     } else {
-    //         for divisor in first_divisors.iter() {
-    //             if divisor <= &threshold {
-    //                 continue;
-    //             }
-    //             match last_divisors.get(divisor) {
-    //                 Some(_) => {
-    //                     output[i] = true;
-    //                     break;
-    //                 },
-    //                 None => (),
-    //             }
-    //         }
-    //     }
-    //     i += 1;
-    // }
     output
 }
 
 fn bfs(graph: &HashMap<i32, BTreeSet<i32>>, a: i32, b: i32) -> bool {
     let graph = graph.clone();
     let found = false;
-    // println!("graph: {:?}", graph);
-    // println!("a: {}\tb: {}", a, b);
 
     let mut visited: HashSet<i32> = HashSet::from([a]);
     let mut queue: VecDeque<i32> = VecDeque::new();
@@ -94,11 +36,9 @@ fn bfs(graph: &HashMap<i32, BTreeSet<i32>>, a: i32, b: i32) -> bool {
     while !queue.is_empty() {
         let node = queue.pop_front().unwrap();
         let connections = graph.get(&node).unwrap();
-        // println!("node: {:?}\tconnections: {:?}\t", node, connections);
         
         for connection in connections {
                 if connection == &b {
-                    // println!("true called");
                     return true;
                 }
 
@@ -144,7 +84,6 @@ fn get_divisors(number: i32) -> BTreeSet<i32> {
         }
         i += 1;
     }
-    // println!("number: {}\tdivisors: {:?}", number, divisors);
     divisors
 }
 
