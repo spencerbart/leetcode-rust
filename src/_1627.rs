@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeSet, HashMap, HashSet},
+    collections::{BTreeSet, HashMap, HashSet, VecDeque},
     vec,
 };
 
@@ -17,7 +17,9 @@ pub fn are_connected(n: i32, threshold: i32, queries: Vec<Vec<i32>>) -> Vec<bool
     let graph = generate_graph(n, threshold);
 
     for query in queries {
-        output.push(bfs(&graph, query))
+        let a = query[0];
+        let b = query[1];
+        output.push(bfs(&graph, a, b))
     }
     // for query in queries.iter() {
     //     output.push(false);
@@ -78,34 +80,32 @@ pub fn are_connected(n: i32, threshold: i32, queries: Vec<Vec<i32>>) -> Vec<bool
     output
 }
 
-fn bfs(graph: &HashMap<i32, BTreeSet<i32>>, query: Vec<i32>) -> bool {
+fn bfs(graph: &HashMap<i32, BTreeSet<i32>>, a: i32, b: i32) -> bool {
     let graph = graph.clone();
     let found = false;
-    println!("{:?}", graph);
+    // println!("graph: {:?}", graph);
+    // println!("a: {}\tb: {}", a, b);
 
-    let a = query[0];
-    let b = query[1];
+    let mut visited: HashSet<i32> = HashSet::from([a]);
+    let mut queue: VecDeque<i32> = VecDeque::new();
 
-    let mut visited: HashSet<i32> = HashSet::new();
-    let mut queue: Vec<i32> = vec![a];
+    queue.push_back(a);
 
-    while queue.len() > 0 {
-        let node = queue.pop().unwrap();
+    while !queue.is_empty() {
+        let node = queue.pop_front().unwrap();
         let connections = graph.get(&node).unwrap();
-        println!("node: {:?}\tconnections: {:?}\t", node, connections);
+        // println!("node: {:?}\tconnections: {:?}\t", node, connections);
+        
         for connection in connections {
-            if connection != &node {
-                queue.push(connection.clone());
-
                 if connection == &b {
+                    // println!("true called");
                     return true;
                 }
 
                 if visited.get(connection).is_none() {
                     visited.insert(connection.clone());
-                    queue.push(connection.clone());
+                    queue.push_back(connection.clone());
                 }
-            }
         }
     }
 
@@ -117,7 +117,11 @@ fn generate_graph(n: i32, threshold: i32) -> HashMap<i32, BTreeSet<i32>> {
 
     for i in 1..n + 1 {
         let divisors = get_divisors(i).split_off(&(threshold + 1));
-        graph.insert(i, divisors);
+        graph.insert(i, divisors.clone());
+        for divisor in divisors {
+            let connections  = graph.get_mut(&divisor).unwrap();
+            connections.insert(i);
+        }
     }
 
     graph
